@@ -1,7 +1,8 @@
+import os
 from telegram import Update, constants
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-TOKEN = "7841302947:AAExr0Zedb-suCORKmcy9b-e7HMpNkwUWJQ"
+TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, constants.ChatAction.TYPING)
