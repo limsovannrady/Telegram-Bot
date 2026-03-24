@@ -1,0 +1,15 @@
+.git
+.gitignore
+.replit
+.replitignore
+.local
+.cache
+.agents
+.pythonlibs
+.upm
+uv.lock
+pyproject.toml
+replit.md
+__pycache__
+*.pyc
+*.pyo
