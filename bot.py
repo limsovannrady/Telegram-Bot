@@ -76,7 +76,7 @@ def get_language_keyboard(page=0):
         nav_row.append(InlineKeyboardButton("⬅️ ថយក្រោយ", callback_data=f"page_{page - 1}"))
     nav_row.append(InlineKeyboardButton(f"📄 {page + 1}/{total_pages}", callback_data="noop"))
     if page < total_pages - 1:
-        nav_row.append(InlineKeyboardButton("បន្ទាប់ ➡️", callback_data=f"page_{page + 1}"))
+        nav_row.append(InlineKeyboardButton("➡️", callback_data=f"page_{page + 1}"))
     buttons.append(nav_row)
 
     return InlineKeyboardMarkup(buttons)
