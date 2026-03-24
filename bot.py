@@ -68,10 +68,8 @@ def get_language_keyboard(page=0):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, constants.ChatAction.TYPING)
     await update.message.reply_text(
-        f"សួស្តី {update.effective_user.first_name}! 👋\n"
-        f"ខ្ញុំជា Bot បកប្រែភាសា។\n\n"
-        f"📝 សូមវាយអក្សរចូលខាងក្រោម ហើយខ្ញុំនឹងបកប្រែឱ្យអ្នក។\n"
-        f"🌐 ប្រើ /language ដើម្បីជ្រើសរើសភាសា។",
+        f"សួស្តី {update.effective_user.first_name} 👋\n\n"
+        f"👉 /language ដើម្បីជ្រើសរើសភាសាបកប្រែ។",
         reply_markup=ForceReply(selective=False),
         do_quote=True
     )
