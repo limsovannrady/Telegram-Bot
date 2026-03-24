@@ -7,6 +7,9 @@ from telegram.ext import (
 from deep_translator import GoogleTranslator
 
 TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
+ADMIN_ID = int(os.environ.get("ADMIN_ID", "0"))
+
+all_users = {}
 
 LANGUAGES = {
     "km": "🇰🇭 ខ្មែរ",
@@ -65,7 +68,15 @@ def get_language_keyboard(page=0):
         buttons.append(row)
     return InlineKeyboardMarkup(buttons)
 
+def track_user(user):
+    all_users[user.id] = {
+        "id": user.id,
+        "name": user.full_name,
+        "username": f"@{user.username}" if user.username else "គ្មាន",
+    }
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    track_user(update.effective_user)
     await context.bot.send_chat_action(update.effective_chat.id, constants.ChatAction.TYPING)
     await update.message.reply_text(
         f"សួស្តី {update.effective_user.first_name} 👋\n\n"
@@ -97,7 +108,20 @@ async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=ForceReply(selective=False)
     )
 
+async def see_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if ADMIN_ID and update.effective_user.id != ADMIN_ID:
+        await update.message.reply_text("❌ អ្នកមិនមានសិទ្ធិប្រើ command នេះទេ។", do_quote=True)
+        return
+    if not all_users:
+        await update.message.reply_text("📭 មិនទាន់មាន user ប្រើប្រាស់ bot នៅឡើយ។", do_quote=True)
+        return
+    lines = [f"👥 Users ទាំងអស់ ({len(all_users)} នាក់):\n"]
+    for i, u in enumerate(all_users.values(), 1):
+        lines.append(f"{i}. {u['name']} | {u['username']} | ID: {u['id']}")
+    await update.message.reply_text("\n".join(lines), do_quote=True)
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    track_user(update.effective_user)
     await context.bot.send_chat_action(update.effective_chat.id, constants.ChatAction.TYPING)
     user_id = update.effective_user.id
     text = update.message.text
@@ -135,6 +159,7 @@ async def post_init(application):
 app = ApplicationBuilder().token(TOKEN).post_init(post_init).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("language", language_command))
+app.add_handler(CommandHandler("see", see_command))
 app.add_handler(CallbackQueryHandler(language_callback, pattern="^lang_"))
 app.add_handler(CallbackQueryHandler(change_lang_callback, pattern="^change_lang$"))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
