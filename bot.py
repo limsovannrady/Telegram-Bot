@@ -95,7 +95,8 @@ async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.delete()
     await context.bot.send_message(
         chat_id=query.message.chat_id,
-        text=f"✅ បកប្រែទៅភាសា {lang_name}"
+        text=f"✅ បកប្រែទៅភាសា {lang_name}",
+        reply_markup=ForceReply(selective=False)
     )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
