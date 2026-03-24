@@ -72,14 +72,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"ខ្ញុំជា Bot បកប្រែភាសា។\n\n"
         f"📝 សូមវាយអក្សរចូលខាងក្រោម ហើយខ្ញុំនឹងបកប្រែឱ្យអ្នក។\n"
         f"🌐 ប្រើ /language ដើម្បីជ្រើសរើសភាសា។",
-        reply_markup=ForceReply(selective=False)
+        reply_markup=ForceReply(selective=False),
+        do_quote=True
     )
 
 async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, constants.ChatAction.TYPING)
     await update.message.reply_text(
         "🌐 សូមជ្រើសរើសភាសាដែលអ្នកចង់បកប្រែទៅ៖",
-        reply_markup=get_language_keyboard()
+        reply_markup=get_language_keyboard(),
+        do_quote=True
     )
 
 async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -108,10 +110,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🌐 បកប្រែទៅ {lang_name}៖\n\n{translated}",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("🔄 ប្តូរភាសា", callback_data="change_lang")]
-            ])
+            ]),
+            do_quote=True
         )
     except Exception as e:
-        await update.message.reply_text("❌ សូមទោស មានបញ្ហាក្នុងការបកប្រែ។ សូមព្យាយាមម្តងទៀត។")
+        await update.message.reply_text(
+            "❌ សូមទោស មានបញ្ហាក្នុងការបកប្រែ។ សូមព្យាយាមម្តងទៀត។",
+            do_quote=True
+        )
 
 async def change_lang_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
