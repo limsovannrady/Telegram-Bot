@@ -52,33 +52,17 @@ LANGUAGES = {
 }
 
 user_language = {}
-LANGS_PER_PAGE = 8
 
 def get_language_keyboard(page=0):
-    lang_list = list(LANGUAGES.items())
-    total_pages = (len(lang_list) + LANGS_PER_PAGE - 1) // LANGS_PER_PAGE
-    start = page * LANGS_PER_PAGE
-    end = start + LANGS_PER_PAGE
-    page_langs = lang_list[start:end]
-
     buttons = []
     row = []
-    for code, name in page_langs:
+    for code, name in LANGUAGES.items():
         row.append(InlineKeyboardButton(name, callback_data=f"lang_{code}"))
         if len(row) == 2:
             buttons.append(row)
             row = []
     if row:
         buttons.append(row)
-
-    nav_row = []
-    if page > 0:
-        nav_row.append(InlineKeyboardButton("⬅️ ថយក្រោយ", callback_data=f"page_{page - 1}"))
-    nav_row.append(InlineKeyboardButton(f"📄 {page + 1}/{total_pages}", callback_data="noop"))
-    if page < total_pages - 1:
-        nav_row.append(InlineKeyboardButton("➡️", callback_data=f"page_{page + 1}"))
-    buttons.append(nav_row)
-
     return InlineKeyboardMarkup(buttons)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -137,14 +121,6 @@ async def change_lang_callback(update: Update, context: ContextTypes.DEFAULT_TYP
         reply_markup=get_language_keyboard(0)
     )
 
-async def page_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    page = int(query.data.replace("page_", ""))
-    await query.edit_message_reply_markup(reply_markup=get_language_keyboard(page))
-
-async def noop_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.callback_query.answer()
 
 async def post_init(application):
     from telegram import BotCommand
@@ -158,7 +134,5 @@ app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("language", language_command))
 app.add_handler(CallbackQueryHandler(language_callback, pattern="^lang_"))
 app.add_handler(CallbackQueryHandler(change_lang_callback, pattern="^change_lang$"))
-app.add_handler(CallbackQueryHandler(page_callback, pattern="^page_"))
-app.add_handler(CallbackQueryHandler(noop_callback, pattern="^noop$"))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 app.run_polling()
