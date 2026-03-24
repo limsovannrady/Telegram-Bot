@@ -17,20 +17,68 @@ LANGUAGES = {
     "fr": "🇫🇷 បារាំង",
     "th": "🇹🇭 ថៃ",
     "vi": "🇻🇳 វៀតណាម",
+    "de": "🇩🇪 អាល្លឺម៉ង់",
+    "es": "🇪🇸 អេស្ប៉ាញ",
+    "ru": "🇷🇺 រុស្សី",
+    "ar": "🇸🇦 អារ៉ាប់",
+    "pt": "🇵🇹 ព័រទុយហ្គាល់",
+    "it": "🇮🇹 អ៊ីតាលី",
+    "hi": "🇮🇳 ហិណ្ឌូ",
+    "id": "🇮🇩 អ៊ីនដូនេស៊ី",
+    "ms": "🇲🇾 ម៉ាឡេស៊ី",
+    "tl": "🇵🇭 ហ្វីលីពីន",
+    "tr": "🇹🇷 តួគី",
+    "nl": "🇳🇱 ហូឡង់",
+    "pl": "🇵🇱 ប៉ូឡូញ",
+    "uk": "🇺🇦 អ៊ុយក្រែន",
+    "sv": "🇸🇪 ស៊ុយអែត",
+    "da": "🇩🇰 ដាណឺម៉ាក",
+    "fi": "🇫🇮 ហ្វាំងឡង់",
+    "no": "🇳🇴 នន័រវែស",
+    "cs": "🇨🇿 ឆែក",
+    "ro": "🇷🇴 រូម៉ានី",
+    "hu": "🇭🇺 ហុងគ្រី",
+    "el": "🇬🇷 ក្រិច",
+    "he": "🇮🇱 អ៊ីស្រាអែល",
+    "fa": "🇮🇷 ហ្វ័រស៊ី",
+    "bn": "🇧🇩 បង់ក្លាដែស",
+    "ur": "🇵🇰 អ៊ូតូ",
+    "sw": "🇰🇪 ស្វាហ៊ីលី",
+    "my": "🇲🇲 មីយ៉ាន់ម៉ា",
+    "lo": "🇱🇦 ឡាវ",
+    "mn": "🇲🇳 ម៉ុងហ្គោល",
+    "si": "🇱🇰 ស្រីលង្កា",
+    "ne": "🇳🇵 នេប៉ាល់",
 }
 
 user_language = {}
+LANGS_PER_PAGE = 8
 
-def get_language_keyboard():
+def get_language_keyboard(page=0):
+    lang_list = list(LANGUAGES.items())
+    total_pages = (len(lang_list) + LANGS_PER_PAGE - 1) // LANGS_PER_PAGE
+    start = page * LANGS_PER_PAGE
+    end = start + LANGS_PER_PAGE
+    page_langs = lang_list[start:end]
+
     buttons = []
     row = []
-    for code, name in LANGUAGES.items():
+    for code, name in page_langs:
         row.append(InlineKeyboardButton(name, callback_data=f"lang_{code}"))
         if len(row) == 2:
             buttons.append(row)
             row = []
     if row:
         buttons.append(row)
+
+    nav_row = []
+    if page > 0:
+        nav_row.append(InlineKeyboardButton("⬅️ ថយក្រោយ", callback_data=f"page_{page - 1}"))
+    nav_row.append(InlineKeyboardButton(f"📄 {page + 1}/{total_pages}", callback_data="noop"))
+    if page < total_pages - 1:
+        nav_row.append(InlineKeyboardButton("បន្ទាប់ ➡️", callback_data=f"page_{page + 1}"))
+    buttons.append(nav_row)
+
     return InlineKeyboardMarkup(buttons)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -86,8 +134,17 @@ async def change_lang_callback(update: Update, context: ContextTypes.DEFAULT_TYP
     await query.answer()
     await query.message.reply_text(
         "🌐 សូមជ្រើសរើសភាសាដែលអ្នកចង់បកប្រែទៅ៖",
-        reply_markup=get_language_keyboard()
+        reply_markup=get_language_keyboard(0)
     )
+
+async def page_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    page = int(query.data.replace("page_", ""))
+    await query.edit_message_reply_markup(reply_markup=get_language_keyboard(page))
+
+async def noop_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.callback_query.answer()
 
 async def post_init(application):
     from telegram import BotCommand
@@ -101,5 +158,7 @@ app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("language", language_command))
 app.add_handler(CallbackQueryHandler(language_callback, pattern="^lang_"))
 app.add_handler(CallbackQueryHandler(change_lang_callback, pattern="^change_lang$"))
+app.add_handler(CallbackQueryHandler(page_callback, pattern="^page_"))
+app.add_handler(CallbackQueryHandler(noop_callback, pattern="^noop$"))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 app.run_polling()
