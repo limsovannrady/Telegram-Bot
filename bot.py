@@ -89,13 +89,9 @@ async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     lang_code = query.data.replace("lang_", "")
-    lang_name = LANGUAGES.get(lang_code, lang_code)
     user_language[query.from_user.id] = lang_code
 
-    await query.edit_message_text(
-        f"✅ អ្នកបានជ្រើសរើស៖ {lang_name}\n\n"
-        f"📝 សូមវាយអក្សរដែលអ្នកចង់បកប្រែ។"
-    )
+    await query.message.delete()
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, constants.ChatAction.TYPING)
