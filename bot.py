@@ -107,7 +107,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         translated = GoogleTranslator(source="auto", target=target_lang).translate(text)
         await update.message.reply_text(
-            f"🌐 បកប្រែទៅ {lang_name}៖\n\n{translated}",
+            translated,
             do_quote=True
         )
     except Exception as e:
