@@ -62,8 +62,14 @@ def get_language_keyboard(page=0):
     page_langs = lang_list[start:end]
 
     buttons = []
+    row = []
     for code, name in page_langs:
-        buttons.append([InlineKeyboardButton(name, callback_data=f"lang_{code}")])
+        row.append(InlineKeyboardButton(name, callback_data=f"lang_{code}"))
+        if len(row) == 2:
+            buttons.append(row)
+            row = []
+    if row:
+        buttons.append(row)
 
     nav_row = []
     if page > 0:
