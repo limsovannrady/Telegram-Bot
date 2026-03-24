@@ -72,7 +72,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"ខ្ញុំជា Bot បកប្រែភាសា។\n\n"
         f"📝 សូមវាយអក្សរចូលខាងក្រោម ហើយខ្ញុំនឹងបកប្រែឱ្យអ្នក។\n"
         f"🌐 ប្រើ /language ដើម្បីជ្រើសរើសភាសា។",
-        reply_markup=ForceReply(selective=False, input_field_placeholder="សរសេរអក្សរនៅទីនេះ...")
+        reply_markup=ForceReply(selective=False)
     )
 
 async def language_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
