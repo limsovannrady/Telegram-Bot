@@ -14,9 +14,11 @@ A Telegram bot that translates messages between languages using Google Translate
 ## Structure
 
 ```
-bot.py          # Main bot logic - all handlers and translation code
-requirements.txt  # Python dependencies
-pyproject.toml    # uv project config
+bot.py              # Core bot logic - handlers, create_app() factory function
+api/webhook.py      # Vercel serverless webhook handler
+vercel.json         # Vercel deployment configuration
+requirements.txt    # Python dependencies
+pyproject.toml      # uv project config
 ```
 
 ## Features
@@ -32,6 +34,14 @@ pyproject.toml    # uv project config
 - `TELEGRAM_BOT_TOKEN` - Bot token from Telegram @BotFather (required)
 - `ADMIN_ID` - Telegram user ID for admin access to `/see` command (optional)
 
-## Running
+## Running Modes
 
-The bot runs in polling mode via the "Telegram Bot" workflow which executes `python3 bot.py`.
+### Polling (Replit / local development)
+The "Telegram Bot" workflow runs `python3 bot.py` which uses polling mode via `create_app().run_polling()`.
+
+### Webhook (Vercel production)
+Deploy to Vercel and set the webhook URL via Telegram API:
+```
+https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://<your-vercel-domain>/api/webhook
+```
+Vercel routes `POST /api/webhook` to `api/webhook.py` which processes each incoming update.
