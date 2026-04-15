@@ -82,7 +82,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     track_user(update.effective_user)
     await context.bot.send_chat_action(update.effective_chat.id, constants.ChatAction.TYPING)
     await update.message.reply_text(
-        f"សួស្តី {update.effective_user.first_name} 👋\n\n"
+        f"សួស្តីបង {update.effective_user.first_name} 👋\n\n"
         f"👉 /language ដើម្បីជ្រើសរើសភាសាបកប្រែ។",
         reply_markup=ForceReply(selective=False),
         do_quote=True
