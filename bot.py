@@ -62,7 +62,7 @@ def get_language_keyboard(page=0):
     row = []
     for code, name in LANGUAGES.items():
         row.append(InlineKeyboardButton(name, callback_data=f"lang_{code}"))
-        if len(row) == 2:
+        if len(row) == 3:
             buttons.append(row)
             row = []
     if row:
