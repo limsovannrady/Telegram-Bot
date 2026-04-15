@@ -15,7 +15,8 @@ A Telegram bot that translates messages between languages using Google Translate
 
 ```
 bot.py              # Core bot logic - handlers, create_app() factory function
-api/webhook.py      # Vercel serverless webhook handler
+api/webhook.py      # Vercel serverless webhook handler (POST from Telegram)
+api/ping.py         # Ping route for Uptimerobot health checks (HEAD/GET)
 vercel.json         # Vercel deployment configuration
 requirements.txt    # Python dependencies
 pyproject.toml      # uv project config
@@ -45,3 +46,10 @@ Deploy to Vercel and set the webhook URL via Telegram API:
 https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://<your-vercel-domain>/api/webhook
 ```
 Vercel routes `POST /api/webhook` to `api/webhook.py` which processes each incoming update.
+
+### Uptimerobot Ping
+Add a monitor in Uptimerobot pointing to:
+```
+https://<your-vercel-domain>/api/ping
+```
+Supports both HEAD and GET requests. Returns `200 OK`.
