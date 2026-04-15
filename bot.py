@@ -71,7 +71,7 @@ def get_language_keyboard(page=0):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(update.effective_chat.id, constants.ChatAction.TYPING)
     await update.message.reply_text(
-        f"សួស្តីបង {update.effective_user.first_name} 👋\n\n"
+        f"សួស្តីបង {update.effective_user.full_name} 👋\n\n"
         f"👉 /language ដើម្បីជ្រើសរើសភាសាបកប្រែ។",
         do_quote=True
     )
