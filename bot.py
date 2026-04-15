@@ -1,5 +1,5 @@
 import os
-from telegram import Update, constants, ForceReply, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, constants, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder, CommandHandler, MessageHandler,
     CallbackQueryHandler, ContextTypes, filters
@@ -73,7 +73,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"សួស្តីបង {update.effective_user.first_name} 👋\n\n"
         f"👉 /language ដើម្បីជ្រើសរើសភាសាបកប្រែ។",
-        reply_markup=ForceReply(selective=False),
         do_quote=True
     )
 
@@ -99,7 +98,6 @@ async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=query.message.chat_id,
         text=f"✅ បកប្រែទៅភាសា {lang_name}",
-        reply_markup=ForceReply(selective=False)
     )
 
 
